@@ -37,16 +37,28 @@ struct ContinuousLine {
         unusedLines.remove(at: 0)
         let startPoint = currentLine.start
         var previousPoint = currentLine.end
+        foundPoints.append(previousPoint)
         
         repeat {
+            let foundLine: Line
             for line in unusedLines {
                 if line.start == previousPoint {
-                    
+                    previousPoint = line.start
+                    foundPoints.append(line.start)
+                    foundLine = line
+                    break
                 } else if line.end == previousPoint {
-                    
+                    previousPoint = line.end
+                    foundPoints.append(line.end)
+                    foundLine = line
+                    break
                 }
              }
+            //unusedLines.remove(at: <#T##Int#>)
         } while (unusedLines.count > 0)
+        
+        foundPoints.append(startPoint)
+        points = []
     }
 }
 
