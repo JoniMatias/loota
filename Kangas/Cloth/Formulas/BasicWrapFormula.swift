@@ -45,7 +45,7 @@ extension Cloth {
         let _/*slackLeft*/ = Flap(from: innerWallLeft, towards: .left, distance: work.clothSlack)
      
         
-        return [svgFrom(lines: findCuttableLines(from: ClothState.allRects))]
+        return [svgFrom(continuousLine: ContinuousLine(lines: findCuttableLines(from: ClothState.allRects)))]
     }
 
     

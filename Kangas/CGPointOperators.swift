@@ -7,9 +7,15 @@
 
 import Foundation
 
-struct Point {
+struct Point: CustomStringConvertible {
     let x: Micron
     let y: Micron
+    
+    public var description: String { return "Point[\(x), \(y)]" }
+    
+    static func manhattanDistance(_ p1: Point, _ p2: Point) -> Micron {
+        return Micron(abs(p1.x.microns - p2.x.microns) + abs(p1.y.microns - p2.y.microns))
+    }
 }
 
 struct Size {
@@ -33,32 +39,57 @@ struct ContinuousLine {
         var unusedLines = lines
         var foundPoints: [Point] = []
         
-        var currentLine = unusedLines.first!
+        let currentLine = unusedLines.first!
         unusedLines.remove(at: 0)
         let startPoint = currentLine.start
         var previousPoint = currentLine.end
         foundPoints.append(previousPoint)
         
         repeat {
-            let foundLine: Line
-            for line in unusedLines {
+            var closestPoint: Point = Point(x: Micron(Int.max), y: Micron(Int.max))
+            var closestDistance = Micron(Int.max)
+            var foundLine: Line?
+            var foundLineIndex: Int? = nil
+            var foundPoint: Point? = nil
+            for i in 0..<unusedLines.count {
+                let line = unusedLines[i]
                 if line.start == previousPoint {
-                    previousPoint = line.start
+                    foundPoint = line.start
                     foundPoints.append(line.start)
-                    foundLine = line
+                    foundPoints.append(line.end)
+                    foundPoint = line.end
+                    foundLineIndex = i
                     break
                 } else if line.end == previousPoint {
-                    previousPoint = line.end
+                    foundPoint = line.end
                     foundPoints.append(line.end)
-                    foundLine = line
+                    foundPoints.append(line.start)
+                    foundPoint = line.start
+                    foundLineIndex = i
                     break
                 }
-             }
-            //unusedLines.remove(at: <#T##Int#>)
+                
+                let startDistance = Point.manhattanDistance(line.start, previousPoint)
+                let endDistance = Point.manhattanDistance(line.end, previousPoint)
+                if startDistance < closestDistance {
+                    closestPoint = line.start
+                    closestDistance = startDistance
+                }
+                if endDistance < closestDistance {
+                    closestPoint = line.end
+                    closestDistance = endDistance
+                }
+            }
+            if let foundLineIndex = foundLineIndex {
+                unusedLines.remove(at: foundLineIndex)
+            }
+            if let foundPoint = foundPoint {
+                previousPoint = foundPoint
+            }
         } while (unusedLines.count > 0)
         
         foundPoints.append(startPoint)
-        points = []
+        points = foundPoints
     }
 }
 
