@@ -20,10 +20,17 @@ class Flap: Rect {
     
     let thinEdge: Direction
     
+    override class func withHillEdge(from: Rect, towards: Direction, distance: Micron, work: WorkSettings) -> Rect {
+        
+        let edgeCurve = Rect(from: from, towards: towards, distance: work.clothThickness)
+        let rect = Flap(from: edgeCurve, towards: towards, distance: distance)
+        
+        return rect
+    }
     
-    override init(from: Rect, towards: Direction, distance: Micron) {
+    required init(from: Rect, towards: Direction, distance: Micron, margin: Micron = Micron(0)) {
         thinEdge = towards
-        super.init(from: from, towards: towards, distance: distance)
+        super.init(from: from, towards: towards, distance: distance, margin: margin)
     }
     
     override func corners() -> [Corner: Point] {

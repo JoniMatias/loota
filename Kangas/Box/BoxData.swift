@@ -11,10 +11,12 @@ import Foundation
 class BoxData {
     let outer: Dimensions
     let inner: Dimensions
+    let work: WorkSettings
     
-    init(outer: Dimensions, work: WorkSettings) {
+    required init(outer: Dimensions, work: WorkSettings) {
         self.outer = outer
         self.inner = type(of: self).calculateInnerDimensionsFrom(outer: outer, materialThickness: work.materialThickness)
+        self.work = work
     }
     
     init(options: Kangas.BoxOptions, work: WorkSettings) {
@@ -32,6 +34,13 @@ class BoxData {
             inner = type(of: self).calculateInnerDimensionsFrom(outer: inputDimensions, materialThickness: work.materialThickness)
         }
         
+        self.work = work
+        
+    }
+    
+    func expanded(with: Micron, direction: [Direction3D]) -> Self {
+        
+        return type(of: self).init(outer: outer.expanded(with: with, except: direction), work: work)
     }
     
     
@@ -57,8 +66,8 @@ class BoxData {
         let heightWalls = (isFaceOpen(.floor) ? Micron(0) : materialThickness) + (isFaceOpen(.ceiling) ? Micron(0) : materialThickness)
         
         let innerWidth =  outer.width  - widthWalls
-        let innerHeight =  outer.depth  - depthWalls
-        let innerDepth = outer.height - heightWalls
+        let innerHeight =  outer.height  - heightWalls
+        let innerDepth = outer.depth - depthWalls
         
         return Dimensions(width: innerWidth, height: innerHeight, depth: innerDepth)
         

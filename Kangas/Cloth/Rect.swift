@@ -14,6 +14,20 @@ class Rect {
     let size: Size
     var neighbours: [Direction: Rect]
     
+    class func withHillEdge(from: Rect, towards: Direction, distance: Micron, work: WorkSettings) -> Rect {
+        
+        let edgeCurve = Rect(from: from, towards: towards, distance: work.clothThickness)
+        let rect = Rect.init(from: edgeCurve, towards: towards, distance: distance)
+        
+        return rect
+    }
+    
+    class func withValleyEdge(from: Rect, towards: Direction, distance: Micron, work: WorkSettings) -> Rect {
+        
+        let rect = Rect.init(from: from, towards: towards, distance: distance - work.clothThickness)
+        
+        return rect
+    }
     
     init(origin: Point, size: Size) {
         self.origin = origin
@@ -22,28 +36,28 @@ class Rect {
         ClothState.allRects.append(self)
     }
     
-    init(from: Rect, towards: Direction, distance: Micron) {
+    required init(from: Rect, towards: Direction, distance: Micron, margin: Micron = Micron(0)) {
         
         let size: Size
         let origin: Point
         
         switch towards {
         case .up:
-            origin = Point(x: from.corners()[.nw]!.x,
+            origin = Point(x: from.corners()[.nw]!.x + margin,
                            y: from.corners()[.nw]!.y + distance)
-            size = Size.init(width: from.lengthOf(edge: .up), height: distance)
+            size = Size.init(width: from.lengthOf(edge: .up) - margin*2, height: distance)
         case .right:
             origin = Point(x: from.corners()[.ne]!.x,
-                             y: from.corners()[.ne]!.y)
-            size = Size.init(width: distance, height: from.lengthOf(edge: .right))
+                             y: from.corners()[.ne]!.y - margin)
+            size = Size.init(width: distance, height: from.lengthOf(edge: .right) - margin*2)
         case .down:
-            origin = Point(x: from.corners()[.sw]!.x,
+            origin = Point(x: from.corners()[.sw]!.x + margin,
                              y: from.corners()[.sw]!.y)
-            size = Size.init(width: from.lengthOf(edge: .down), height: distance)
+            size = Size.init(width: from.lengthOf(edge: .down) - margin*2, height: distance)
         case .left:
             origin = Point(x: from.corners()[.nw]!.x - distance,
-                             y: from.corners()[.nw]!.y)
-            size = Size.init(width: distance, height: from.lengthOf(edge: .left))
+                           y: from.corners()[.nw]!.y - margin)
+            size = Size.init(width: distance, height: from.lengthOf(edge: .left) - margin*2)
             
         }
         

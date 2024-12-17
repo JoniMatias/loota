@@ -105,12 +105,18 @@ struct Dimensions {
         self.depth = depth
     }
     
-    func expanded(with expansion: Micron) -> Dimensions {
-        let outerWidth =  self.width  + 2*expansion
-        let outerDepth =  self.depth  + 2*expansion
-        let outerHeight = self.height + 2*expansion
+    func expanded(with expansion: Micron, direction: [Direction3D] = Direction3D.allCases) -> Dimensions {
+        let outerWidth =  self.width + (direction.contains(.left) ? expansion : Micron(0)) + (direction.contains(.right) ? expansion : Micron(0))
+        let outerDepth =  self.depth  + (direction.contains(.front) ? expansion : Micron(0)) + (direction.contains(.back) ? expansion : Micron(0))
+        let outerHeight = self.height + (direction.contains(.floor) ? expansion : Micron(0)) + (direction.contains(.ceiling) ? expansion : Micron(0))
         
         return Dimensions(width: outerWidth, height: outerHeight, depth: outerDepth)
+    }
+    
+    func expanded(with expansion: Micron, except: [Direction3D]) -> Dimensions {
+        var direction = Direction3D.allCases
+        direction.removeAll(where: { except.contains($0) })
+        return expanded(with: expansion, direction: direction)
     }
     
     //Staattisen valmiit "konstruktorit"
