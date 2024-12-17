@@ -69,6 +69,8 @@ struct ContinuousLine {
                     break
                 }
                 
+                /*
+                 Debuggausta varten
                 let startDistance = Point.manhattanDistance(line.start, previousPoint)
                 let endDistance = Point.manhattanDistance(line.end, previousPoint)
                 if startDistance < closestDistance {
@@ -79,6 +81,7 @@ struct ContinuousLine {
                     closestPoint = line.end
                     closestDistance = endDistance
                 }
+                 */
             }
             if let foundLineIndex = foundLineIndex {
                 unusedLines.remove(at: foundLineIndex)

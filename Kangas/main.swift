@@ -60,10 +60,6 @@ func findCuttableLines(from: [Rect]) -> [Line] {
     
     for rect in from {
         lines.append(contentsOf: rect.freeLines())
-        /*let freeEdges = rect.freeEdges()
-        for edge in freeEdges {
-            lines.append(rect.lineAlong(edge: edge))
-        }*/
     }
     
     return lines
