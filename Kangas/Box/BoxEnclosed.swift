@@ -14,7 +14,7 @@ class BoxEnclosed: BoxData {
         return false
     }
     
-    override func toUrl(work: WorkSettings) -> String {
+    override func toBoxesPyAddress(work: WorkSettings) -> String {
         let base = "https://boxes.hackerspace-bamberg.de/ClosedBox?"
         let string = "x=\(outer.width.inMillimeter())&y=\(outer.depth.inMillimeter())&h=\(outer.height.inMillimeter())&thickness=\(work.materialThickness.inMillimeter())&outside=1&burn=\(work.kerf.inMillimeter())&render=1"
         return base + string

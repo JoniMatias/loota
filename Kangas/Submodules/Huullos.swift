@@ -78,19 +78,23 @@ extension Kangas {
             
             let boxesPyFileContent = """
             Pohja:
-            \(baseBox.toUrl(work: workData))
+            \(baseBox.toBoxesPyAddress(work: workData))
             Kansi:
-            \(lidBox.toUrl(work: workData))
+            \(lidBox.toBoxesPyAddress(work: workData))
             Huullos:
-            \(lipBox.toUrl(work: workData))
+            \(lipBox.toBoxesPyAddress(work: workData))
             """
             
+            inoutOptions.download(url: baseBox.toUrl(work: workData), suffix: "-laatikko-pohja.svg")
+            inoutOptions.download(url: lidBox.toUrl(work: workData), suffix: "-laatikko-kansi.svg")
+            inoutOptions.download(url: lipBox.toUrl(work: workData), suffix: "-laatikko-huullos.svg")
+            
             inoutOptions.write(content: boxesPyFileContent, suffix: "-url.txt")
-            inoutOptions.write(content: baseCloth, suffix: "-pohjakangas.svg")
-            inoutOptions.write(content: lidCloth, suffix: "-kansikangas.svg")
-            inoutOptions.write(content: lipCloth, suffix: "-huulloskangas.svg")
-            inoutOptions.write(content: floorCloth, suffix: "-pohjan_pohjakangas.svg")
-            inoutOptions.write(content: ceilingCloth, suffix: "-kannen_pohjakangas.svg")
+            inoutOptions.write(content: baseCloth, suffix: "-kangas-pohja.svg")
+            inoutOptions.write(content: lidCloth, suffix: "-kangas-kansi.svg")
+            inoutOptions.write(content: lipCloth, suffix: "-kangas-huullos.svg")
+            inoutOptions.write(content: floorCloth, suffix: "-kabgas-pohjan_pohja.svg")
+            inoutOptions.write(content: ceilingCloth, suffix: "-kangas-kannen_pohja.svg")
             
         }
     }

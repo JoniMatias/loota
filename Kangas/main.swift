@@ -46,6 +46,28 @@ struct Kangas: ParsableCommand {
                 print("Kirjoittaessa tiedostoa \(url.path) tapahtui virhe: \(error).")
             }
         }
+        
+        func download(url: URL, suffix: String) {
+            let filename = outputFileName + suffix
+            print("Ladataan tiedostoa \(filename)")
+            
+            FileDownloader.loadFileSync(url: url) { (path, error) in
+                if let path = path {
+                    do {
+                        let currentFileUrl = URL(filePath: path)
+                        let renamedUrl = currentFileUrl.deletingLastPathComponent().appending(component: filename)
+                        try FileManager.default.moveItem(at: currentFileUrl, to: renamedUrl)
+                        print("Tiedosto ladattiin sijaintiin \(renamedUrl.relativePath)")
+                    } catch {
+                        print("Ladatun tiedoston nimeäminen epäonnistui. Se on tallennettu nimellä \(path)")
+                    }
+                } else {
+                    print("Tiedoston lataaminen epäonnistui.")
+                }
+            }
+            
+            
+        }
     }
 
 

@@ -99,8 +99,13 @@ class BoxData {
     /*
      Tuottaa linkin boxes.py-ohjelmaan, joka generoi halutunlaisen laatikon.
      */
-    func toUrl(work: WorkSettings) -> String {
+    func toBoxesPyAddress(work: WorkSettings) -> String {
         return "Ohjelma käytti BoxData-yläluokkaa luomaan laatikon. Sen olisi pitänyt käyttää jotain sen alaluokkaa."
+    }
+    
+    func toUrl(work: WorkSettings) -> URL {
+        let address = toBoxesPyAddress(work: work)
+        return URL(string: address)!
     }
         
     

@@ -36,8 +36,10 @@ extension Kangas {
             
             let boxesPyFileContent = """
             Loota:
-            \(totalBox.toUrl(work: workData))
+            \(totalBox.toBoxesPyAddress(work: workData))
             """
+            
+            inoutOptions.download(url: totalBox.toUrl(work: workData), suffix: "-laatikko.svg")
             
             inoutOptions.write(content: boxesPyFileContent, suffix: "-url.txt")
             inoutOptions.write(content: cloth, suffix: "-kangas.svg")
