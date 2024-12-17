@@ -37,26 +37,26 @@ extension Cloth {
         
         
         let outerWall1 = Rect(origin: p(0,0), size: Size(width: box.outer.width, height: outerFillLength))
-        let outerWall2 = Rect(from: outerWall1, towards: .right, distance: box.outer.depth)
-        let outerWall3 = Rect(from: outerWall2, towards: .right, distance: box.outer.width)
-        let outerWall4 = Rect(from: outerWall3, towards: .right, distance: box.outer.depth)
-        let outerFlap = Flap(from: outerWall4, towards: .right, distance: outerFillLength / 6)
+        let outerWall2 = Rect.withHillEdge(from: outerWall1, towards: .right, distance: box.outer.depth, work: work)
+        let outerWall3 = Rect.withHillEdge(from: outerWall2, towards: .right, distance: box.outer.width, work: work)
+        let outerWall4 = Rect.withHillEdge(from: outerWall3, towards: .right, distance: box.outer.depth, work: work)
+        let _/*outerFlap*/ = Flap.withHillEdge(from: outerWall4, towards: .right, distance: outerFillLength / 6, work: work)
         
-        let rim1 = Flap(from: outerWall1, towards: .up, distance: work.materialThickness)
-        let rim2 = Flap(from: outerWall2, towards: .up, distance: work.materialThickness)
-        let rim3 = Flap(from: outerWall3, towards: .up, distance: work.materialThickness)
-        let rim4 = Flap(from: outerWall4, towards: .up, distance: work.materialThickness)
+        let rim1 = Flap.withHillEdge(from: outerWall1, towards: .up, distance: work.materialThickness, work: work)
+        let rim2 = Flap.withHillEdge(from: outerWall2, towards: .up, distance: work.materialThickness, work: work)
+        let rim3 = Flap.withHillEdge(from: outerWall3, towards: .up, distance: work.materialThickness, work: work)
+        let rim4 = Flap.withHillEdge(from: outerWall4, towards: .up, distance: work.materialThickness, work: work)
         
         
-        let innerWall1 = Rect(from: rim1, towards: .up, distance: box.inner.height)
-        let innerWall2 = Rect(from: rim2, towards: .up, distance: box.inner.height)
-        let innerWall3 = Rect(from: rim3, towards: .up, distance: box.inner.height)
-        let innerWall4 = Rect(from: rim4, towards: .up, distance: box.inner.height)
+        let innerWall1 = Rect.withHillEdge(from: rim1, towards: .up, distance: box.inner.height, work: work)
+        let innerWall2 = Rect.withHillEdge(from: rim2, towards: .up, distance: box.inner.height, work: work)
+        let innerWall3 = Rect.withHillEdge(from: rim3, towards: .up, distance: box.inner.height, work: work)
+        let innerWall4 = Rect.withHillEdge(from: rim4, towards: .up, distance: box.inner.height, work: work)
         
-        let slack1 = Flap(from: innerWall1, towards: .up, distance: work.clothSlack)
-        let slack2 = Flap(from: innerWall2, towards: .up, distance: work.clothSlack)
-        let slack3 = Flap(from: innerWall3, towards: .up, distance: work.clothSlack)
-        let slack4 = Flap(from: innerWall4, towards: .up, distance: work.clothSlack)
+        let _/*slack1*/ = Flap.withValleyEdge(from: innerWall1, towards: .up, distance: work.clothSlack, work: work)
+        let _/*slack2*/ = Flap.withValleyEdge(from: innerWall2, towards: .up, distance: work.clothSlack, work: work)
+        let _/*slack3*/ = Flap.withValleyEdge(from: innerWall3, towards: .up, distance: work.clothSlack, work: work)
+        let _/*slack4*/ = Flap.withValleyEdge(from: innerWall4, towards: .up, distance: work.clothSlack, work: work)
         
         
         return [svgFrom(lines: findCuttableLines(from: ClothState.allRects))]
