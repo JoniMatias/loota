@@ -20,6 +20,7 @@ class Rect {
     let size: Size
     var neighbours: [Direction: Rect]
     
+    
     class func withFold(from: Rect, towards: Direction, distance: Micron, margin: Micron = Micron(0), fold: FoldType, work: WorkSettings) -> Rect {
         
         let actualFold = work.clothThickness == Micron(0) ? .none : fold
@@ -87,25 +88,6 @@ class Rect {
         ClothState.allRects.append(self)
     }
     
-    public func freeCornerPointsNextTo(corner: Corner) -> [Point] {
-        var freeCornerPoints: [Point] = []
-        
-        let edges = edges(of: corner)
-        let pointAtThisCorner = corners()[corner]!
-        
-        for edge in edges {
-            if neighbours[edge] == nil {
-                let ends = pointsAlong(edge: edge)
-                for end in ends {
-                    if end != pointAtThisCorner {
-                        freeCornerPoints.append(end)
-                    }
-                }
-            }
-        }
-        
-        return freeCornerPoints
-    }
     
     public func lineAlong(edge: Direction) -> Line {
         let points = pointsAlong(edge: edge)
@@ -140,6 +122,66 @@ class Rect {
         return edges
     }
     
+    
+    public func marginWith(neighbour: Direction) -> Micron {
+        let neighbourRect = neighbours[neighbour]
+        if let rect = neighbourRect {
+            switch neighbour {
+            case .up, .down:
+                return self.size.width - rect.size.width
+            case .right, .left:
+                return self.size.height - rect.size.height
+            }
+        }
+        return Micron(0)
+    }
+    
+    public func linesCreatedByMargin(towards: Direction) -> [Line] {
+        
+        if let neighbour = neighbours[towards] {
+            let margin = marginWith(neighbour: towards)
+            
+            guard margin.microns > 0 else {
+                return []
+            }
+            
+            let line1: Line
+            let line2: Line
+            
+            switch towards {
+            case .up:
+                line1 = Line(self.corner(.nw), neighbour.corner(.sw))
+                line2 = Line(self.corner(.ne), neighbour.corner(.se))
+            case .right:
+                line1 = Line(self.corner(.ne), neighbour.corner(.nw))
+                line2 = Line(self.corner(.se), neighbour.corner(.sw))
+            case .down:
+                line1 = Line(self.corner(.se), neighbour.corner(.ne))
+                line2 = Line(self.corner(.sw), neighbour.corner(.nw))
+            case .left:
+                line1 = Line(self.corner(.sw), neighbour.corner(.se))
+                line2 = Line(self.corner(.nw), neighbour.corner(.ne))
+            }
+            
+            return [line1, line2]
+        } else {
+            return []
+        }
+    }
+    
+    public func freeLines() -> [Line] {
+        var lines: [Line] = []
+        let edges = freeEdges()
+        for edge in edges {
+            lines.append(lineAlong(edge: edge))
+        }
+        for edge in sharedEdges() {
+            let marginLines = linesCreatedByMargin(towards: edge)
+            lines.append(contentsOf: marginLines)
+        }
+        return lines
+    }
+    
     public func cornerDirection(at: Point) -> Corner? {
         let corners = corners()
         for corner in Corner.allCases {
@@ -157,6 +199,10 @@ class Rect {
         let se = Point(x: origin.x + size.width, y: origin.y - size.height)
         let sw = Point(x: origin.x,              y: origin.y - size.height)
         return [.nw: nw, .ne: ne, .se: se, .sw: sw]
+    }
+    
+    public func corner(_ corner: Corner) -> Point {
+        return corners()[corner]!
     }
     
     public func lengthOf(edge: Direction) -> Micron {

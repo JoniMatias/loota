@@ -19,6 +19,7 @@ extension Cloth {
         let size = box.outer
         
         let rimShape = work.squareCorners ? Rect.self : Flap.self
+        let innerWallOffset = work.squareCorners ? work.materialThickness : Micron(0)
         
         let base = Rect(origin: p(0,0), size: Size(width: size.width, height: size.depth))
         
@@ -37,10 +38,10 @@ extension Cloth {
         let _/*flapDownLeft*/ = Flap.withFold(from: outerWallDown, towards: .left, distance: size.height / 6, fold: .hill, work: work)
         let _/*flapDownRight*/ = Flap.withFold(from: outerWallDown, towards: .right, distance: size.height / 6, fold: .hill, work: work)
         
-        let innerWallUp = Rect.withFold(from: rimUp, towards: .up, distance: box.inner.height, fold: .hill, work: work)
-        let innerWallRight = Rect.withFold(from: rimRight, towards: .right, distance: box.inner.height, fold: .hill, work: work)
-        let innerWallDown = Rect.withFold(from: rimDown, towards: .down, distance: box.inner.height, fold: .hill, work: work)
-        let innerWallLeft = Rect.withFold(from: rimLeft, towards: .left, distance: box.inner.height, fold: .hill, work: work)
+        let innerWallUp = Rect.withFold(from: rimUp, towards: .up, distance: box.inner.height, margin: innerWallOffset, fold: .hill, work: work)
+        let innerWallRight = Rect.withFold(from: rimRight, towards: .right, distance: box.inner.height, margin: innerWallOffset,  fold: .hill, work: work)
+        let innerWallDown = Rect.withFold(from: rimDown, towards: .down, distance: box.inner.height, margin: innerWallOffset,  fold: .hill, work: work)
+        let innerWallLeft = Rect.withFold(from: rimLeft, towards: .left, distance: box.inner.height, margin: innerWallOffset,  fold: .hill, work: work)
         
         let _/*slackUp*/ = Flap.withFold(from: innerWallUp, towards: .up, distance: work.clothSlack, fold: .valley, work: work)
         let _/*slackRight*/ = Flap.withFold(from: innerWallRight, towards: .right, distance: work.clothSlack, fold: .valley, work: work)

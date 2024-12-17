@@ -59,10 +59,11 @@ func findCuttableLines(from: [Rect]) -> [Line] {
     var lines: [Line] = []
     
     for rect in from {
-        let freeEdges = rect.freeEdges()
+        lines.append(contentsOf: rect.freeLines())
+        /*let freeEdges = rect.freeEdges()
         for edge in freeEdges {
             lines.append(rect.lineAlong(edge: edge))
-        }
+        }*/
     }
     
     return lines
@@ -151,45 +152,6 @@ func randomColor() -> String {
     return "black"
 }
 
-
-func traceOutline(startFrom: Rect, corner: Corner) -> [Point] {
-    var points: [Point] = []
-    
-    var continueLoop = false
-    var currentPoint = startFrom.corners()[corner]!
-    var previousPoint = currentPoint
-    
-    points.append(currentPoint)
-    
-    repeat {
-        
-        var possiblePoints: [Point] = []
-        let possibleRects = ClothState.sharedCorners[currentPoint]!
-        for rect in possibleRects {
-            let corner = rect.cornerDirection(at: currentPoint)
-            if let corner = corner {
-                let freePoints = rect.freeCornerPointsNextTo(corner: corner)
-                for point in freePoints {
-                    possiblePoints.append(point)
-                }
-            }
-        }
-        
-        continueLoop = false
-        for point in possiblePoints {
-            if point != previousPoint {
-                continueLoop = true
-                points.append(point)
-                previousPoint = currentPoint
-                currentPoint = point
-                break
-            }
-        }
-        
-    } while (continueLoop)
-    
-    return points
-}
 
 
 Kangas.main()
