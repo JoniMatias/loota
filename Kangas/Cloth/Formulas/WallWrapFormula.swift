@@ -32,14 +32,16 @@ extension Cloth {
         
         ClothState.reset()
         
-        let hasBottomSlack = parameters.bottomSlack > Micron(0) && parameters.outerWallFill > box.outer.height
         let outerFillLength = parameters.outerWallFill > Micron(0) ? min(box.outer.height, parameters.outerWallFill) : box.outer.height
+        let hasBottomSlack = parameters.bottomSlack > Micron(0) && outerFillLength >= box.outer.height
+        
         
         
         let outerWall1 = Rect(origin: p(0,0), size: Size(width: box.outer.width, height: outerFillLength))
         let outerWall2 = Rect.withHillEdge(from: outerWall1, towards: .right, distance: box.outer.depth, work: work)
         let outerWall3 = Rect.withHillEdge(from: outerWall2, towards: .right, distance: box.outer.width, work: work)
         let outerWall4 = Rect.withHillEdge(from: outerWall3, towards: .right, distance: box.outer.depth, work: work)
+        
         let _/*outerFlap*/ = Flap.withHillEdge(from: outerWall4, towards: .right, distance: outerFillLength / 6, work: work)
         
         let rim1 = Flap.withHillEdge(from: outerWall1, towards: .up, distance: work.materialThickness, work: work)
@@ -57,6 +59,13 @@ extension Cloth {
         let _/*slack2*/ = Flap.withValleyEdge(from: innerWall2, towards: .up, distance: work.clothSlack, work: work)
         let _/*slack3*/ = Flap.withValleyEdge(from: innerWall3, towards: .up, distance: work.clothSlack, work: work)
         let _/*slack4*/ = Flap.withValleyEdge(from: innerWall4, towards: .up, distance: work.clothSlack, work: work)
+        
+        if hasBottomSlack {
+            let bottomSlack1 = Flap.withHillEdge(from: outerWall1, towards: .down, distance: parameters.bottomSlack, work: work)
+            let bottomSlack2 = Flap.withHillEdge(from: outerWall2, towards: .down, distance: parameters.bottomSlack, work: work)
+            let bottomSlack3 = Flap.withHillEdge(from: outerWall3, towards: .down, distance: parameters.bottomSlack, work: work)
+            let bottomSlack4 = Flap.withHillEdge(from: outerWall4, towards: .down, distance: parameters.bottomSlack, work: work)
+        }
         
         
         return [svgFrom(lines: findCuttableLines(from: ClothState.allRects))]
