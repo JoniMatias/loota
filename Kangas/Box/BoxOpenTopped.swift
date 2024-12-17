@@ -10,7 +10,7 @@ import Foundation
 
 class BoxOpenTopped: BoxData {
     
-    override func isFaceOpen(_ face: Direction3D) -> Bool {
+    override class func isFaceOpen(_ face: Direction3D) -> Bool {
         return face == .ceiling ? true : false
     }
     

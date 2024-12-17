@@ -32,6 +32,9 @@ extension Cloth {
         
         ClothState.reset()
         
+        let rimShape = work.squareCorners ? Rect.self : Flap.self
+        let internalOffset = work.squareCorners ? work.materialThickness : Micron(0)
+        
         let outerFillLength = parameters.outerWallFill > Micron(0) ? min(box.outer.height, parameters.outerWallFill) : box.outer.height
         let hasBottomSlack = parameters.bottomSlack > Micron(0) && outerFillLength >= box.outer.height
         
@@ -44,10 +47,10 @@ extension Cloth {
         
         let _/*outerFlap*/ = Flap.withFold(from: outerWall4, towards: .right, distance: outerFillLength / 6, fold: .hill, work: work)
         
-        let rim1 = Flap.withFold(from: outerWall1, towards: .up, distance: work.materialThickness, fold: .hill, work: work)
-        let rim2 = Flap.withFold(from: outerWall2, towards: .up, distance: work.materialThickness, fold: .hill, work: work)
-        let rim3 = Flap.withFold(from: outerWall3, towards: .up, distance: work.materialThickness, fold: .hill, work: work)
-        let rim4 = Flap.withFold(from: outerWall4, towards: .up, distance: work.materialThickness, fold: .hill, work: work)
+        let rim1 = rimShape.withFold(from: outerWall1, towards: .up, distance: work.materialThickness, fold: .hill, work: work)
+        let rim2 = rimShape.withFold(from: outerWall2, towards: .up, distance: work.materialThickness, fold: .hill, work: work)
+        let rim3 = rimShape.withFold(from: outerWall3, towards: .up, distance: work.materialThickness, fold: .hill, work: work)
+        let rim4 = rimShape.withFold(from: outerWall4, towards: .up, distance: work.materialThickness, fold: .hill, work: work)
         
         
         let innerWall1 = Rect.withFold(from: rim1, towards: .up, distance: box.inner.height, fold: .hill, work: work)
@@ -55,10 +58,10 @@ extension Cloth {
         let innerWall3 = Rect.withFold(from: rim3, towards: .up, distance: box.inner.height, fold: .hill, work: work)
         let innerWall4 = Rect.withFold(from: rim4, towards: .up, distance: box.inner.height, fold: .hill, work: work)
         
-        let _/*slack1*/ = Flap.withFold(from: innerWall1, towards: .up, distance: work.clothSlack, fold: .valley, work: work)
-        let _/*slack2*/ = Flap.withFold(from: innerWall2, towards: .up, distance: work.clothSlack, fold: .valley, work: work)
-        let _/*slack3*/ = Flap.withFold(from: innerWall3, towards: .up, distance: work.clothSlack, fold: .valley, work: work)
-        let _/*slack4*/ = Flap.withFold(from: innerWall4, towards: .up, distance: work.clothSlack, fold: .valley, work: work)
+        let _/*slack1*/ = Flap.withFold(from: innerWall1, towards: .up, distance: work.clothSlack, margin: internalOffset, fold: .valley, work: work)
+        let _/*slack2*/ = Flap.withFold(from: innerWall2, towards: .up, distance: work.clothSlack, margin: internalOffset,  fold: .valley, work: work)
+        let _/*slack3*/ = Flap.withFold(from: innerWall3, towards: .up, distance: work.clothSlack, margin: internalOffset,  fold: .valley, work: work)
+        let _/*slack4*/ = Flap.withFold(from: innerWall4, towards: .up, distance: work.clothSlack, margin: internalOffset,  fold: .valley, work: work)
         
         
         if hasBottomSlack {

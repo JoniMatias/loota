@@ -18,7 +18,7 @@ extension Cloth {
         
         let size = box.outer
         
-        print("Ulkomitat: \(box.outer) sisämitat: \(box.inner)")
+        let rimShape = work.squareCorners ? Rect.self : Flap.self
         
         let base = Rect(origin: p(0,0), size: Size(width: size.width, height: size.depth))
         
@@ -27,10 +27,10 @@ extension Cloth {
         let outerWallDown = Rect.withFold(from: base, towards: .down, distance: size.height, fold: .hill, work: work)
         let outerWallLeft = Rect.withFold(from: base, towards: .left, distance: size.height, fold: .hill, work: work)
         
-        let rimUp = Flap.withFold(from: outerWallUp, towards: .up, distance: work.materialThickness + work.clothThickness, fold: .hill, work: work)
-        let rimRight = Flap.withFold(from: outerWallRight, towards: .right, distance: work.materialThickness + work.clothThickness, fold: .hill, work: work)
-        let rimDown = Flap.withFold(from: outerWallDown, towards: .down, distance: work.materialThickness + work.clothThickness, fold: .hill, work: work)
-        let rimLeft = Flap.withFold(from: outerWallLeft, towards: .left, distance: work.materialThickness + work.clothThickness, fold: .hill, work: work)
+        let rimUp = rimShape.withFold(from: outerWallUp, towards: .up, distance: work.materialThickness + work.clothThickness, fold: .hill, work: work)
+        let rimRight = rimShape.withFold(from: outerWallRight, towards: .right, distance: work.materialThickness + work.clothThickness, fold: .hill, work: work)
+        let rimDown = rimShape.withFold(from: outerWallDown, towards: .down, distance: work.materialThickness + work.clothThickness, fold: .hill, work: work)
+        let rimLeft = rimShape.withFold(from: outerWallLeft, towards: .left, distance: work.materialThickness + work.clothThickness, fold: .hill, work: work)
         
         let _/*flapUpLeft*/ = Flap.withFold(from: outerWallUp, towards: .left, distance: size.height / 6, fold: .hill, work: work)
         let _/*flapUpRight*/ = Flap.withFold(from: outerWallUp, towards: .right, distance: size.height / 6, fold: .hill, work: work)

@@ -12,10 +12,11 @@ class BoxData {
     let outer: Dimensions
     let inner: Dimensions
     let work: WorkSettings
+    //let faces: [Direction3D: Bool] //Onko sivua olemassa? true: seinä, false: aukko
     
     required init(outer: Dimensions, work: WorkSettings) {
         self.outer = outer
-        self.inner = type(of: self).calculateInnerDimensionsFrom(outer: outer, materialThickness: work.materialThickness)
+        self.inner = BoxData.calculateInnerDimensionsFrom(outer: outer, faces: type(of: self).faces(), materialThickness: work.materialThickness)
         self.work = work
     }
     
@@ -27,11 +28,11 @@ class BoxData {
         
         
         if options.internalDimensions {
-            outer = type(of: self).calculateOuterDimensionsFrom(inner: inputDimensions, materialThickness: work.materialThickness)
+            outer = BoxData.calculateOuterDimensionsFrom(inner: inputDimensions, faces: type(of: self).faces(), materialThickness: work.materialThickness)
             inner = inputDimensions
         } else {
             outer = inputDimensions
-            inner = type(of: self).calculateInnerDimensionsFrom(outer: inputDimensions, materialThickness: work.materialThickness)
+            inner = BoxData.calculateInnerDimensionsFrom(outer: inputDimensions, faces: type(of: self).faces(), materialThickness: work.materialThickness)
         }
         
         self.work = work
@@ -43,11 +44,11 @@ class BoxData {
     }
     
     
-    class func calculateOuterDimensionsFrom(inner: Dimensions, materialThickness: Micron) -> Dimensions {
+    class func calculateOuterDimensionsFrom(inner: Dimensions, faces: [Direction3D], materialThickness: Micron) -> Dimensions {
         
-        let widthWalls = (isFaceOpen(.left) ? Micron(0) : materialThickness) + (isFaceOpen(.right) ? Micron(0) : materialThickness)
-        let depthWalls = (isFaceOpen(.front) ? Micron(0) : materialThickness) + (isFaceOpen(.back) ? Micron(0) : materialThickness)
-        let heightWalls = (isFaceOpen(.floor) ? Micron(0) : materialThickness) + (isFaceOpen(.ceiling) ? Micron(0) : materialThickness)
+        let widthWalls = (faces.contains(.left) ? materialThickness : Micron(0)) + (faces.contains(.right) ? materialThickness : Micron(0))
+        let depthWalls = (faces.contains(.front) ? materialThickness : Micron(0)) + (faces.contains(.back) ? materialThickness : Micron(0))
+        let heightWalls = (faces.contains(.floor) ? materialThickness : Micron(0)) + (faces.contains(.ceiling) ? materialThickness : Micron(0))
         
         
         let outerWidth =  inner.width  + widthWalls
@@ -58,11 +59,14 @@ class BoxData {
         
     }
     
-    class func calculateInnerDimensionsFrom(outer: Dimensions, materialThickness: Micron) -> Dimensions {
+    class func calculateInnerDimensionsFrom(outer: Dimensions, faces: [Direction3D], materialThickness: Micron) -> Dimensions {
         
-        let widthWalls = (isFaceOpen(.left) ? Micron(0) : materialThickness) + (isFaceOpen(.right) ? Micron(0) : materialThickness)
-        let depthWalls = (isFaceOpen(.front) ? Micron(0) : materialThickness) + (isFaceOpen(.back) ? Micron(0) : materialThickness)
-        let heightWalls = (isFaceOpen(.floor) ? Micron(0) : materialThickness) + (isFaceOpen(.ceiling) ? Micron(0) : materialThickness)
+        let widthWalls = (faces.contains(.left) ? materialThickness : Micron(0)) +
+            (faces.contains(.right) ? materialThickness : Micron(0))
+        let depthWalls = (faces.contains(.front) ? materialThickness : Micron(0)) +
+            (faces.contains(.back) ? materialThickness : Micron(0))
+        let heightWalls = (faces.contains(.floor) ? materialThickness : Micron(0)) +
+            (faces.contains(.ceiling) ? materialThickness : Micron(0))
         
         let innerWidth =  outer.width  - widthWalls
         let innerHeight =  outer.height  - heightWalls
@@ -73,21 +77,24 @@ class BoxData {
     }
     
     
-    /*
-     Luokan sisällä oleva metodi, jonka tarkoitus on helpottaa saman nimisen luokkametodin käyttöä. Tätä ei kuulu overridata.
-     */
-    func isFaceOpen(_ face: Direction3D) -> Bool {
-        return type(of: self).isFaceOpen(face)
+
+    
+    class func faces() -> [Direction3D] {
+        var foundFaces: [Direction3D] = []
+        for face in Direction3D.allCases {
+            if isFaceOpen(face) == false {
+                foundFaces.append(face)
+            }
+        }
+        return foundFaces
     }
     
     
-    //MARK: Overridable class methods
-    /*
-     Overridattava luokkafunktio, joka palauttaa luokan tyyppisen laatikon sivujen tilan.
-     */
+    //MARK: Overridable methods
     class func isFaceOpen(_ face: Direction3D) -> Bool {
         return false
     }
+    
     
     /*
      Tuottaa linkin boxes.py-ohjelmaan, joka generoi halutunlaisen laatikon.

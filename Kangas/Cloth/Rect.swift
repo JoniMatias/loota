@@ -22,7 +22,9 @@ class Rect {
     
     class func withFold(from: Rect, towards: Direction, distance: Micron, margin: Micron = Micron(0), fold: FoldType, work: WorkSettings) -> Rect {
         
-        switch fold {
+        let actualFold = work.clothThickness == Micron(0) ? .none : fold
+        
+        switch actualFold {
         case .hill:
             let foldRect = Rect(from: from, towards: towards, distance: work.clothThickness, margin: margin)
             let rect = Rect.init(from: foldRect, towards: towards, distance: distance)

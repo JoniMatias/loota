@@ -24,7 +24,7 @@ extension Kangas {
             let totalBox: BoxData
             
             if options.internalDimensions {
-                //Lasketaan ulkopuolen mittasuhteet kuntoon ennen aloittamista.
+                //Lasketaan ulkopuolen mittasuhteet kuntoon ennen aloittamista. Tätä ei voi tehdä BoxDatan sisällä, koska huulloslaatikko käyttää useampaa sisäkkäistä laatikkoa.
                 let internalBox = BoxData(options: options, work: workData)
                 let outerDimension = Dimensions(width: internalBox.outer.width + 2*workData.materialThickness + 2*workData.clothThickness,
                                                 height: internalBox.outer.height + 2*workData.materialThickness,
