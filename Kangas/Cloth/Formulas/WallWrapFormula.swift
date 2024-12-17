@@ -39,120 +39,61 @@ extension Cloth {
         let hasBottomSlack = parameters.bottomSlack > Micron(0) && outerFillLength >= box.outer.height
         
         
+        var outerWalls: [Rect] = []
+        outerWalls.append(Rect(origin: p(0,0), size: Size(width: box.outer.width, height: outerFillLength)))
         
-        let outerWall1 = Rect(origin: p(0,0), size: Size(width: box.outer.width, height: outerFillLength))
+        for i in 1...3 {
+            outerWalls.append(Rect.withFold(from: outerWalls[i-1],
+                                            towards: .right,
+                                            distance: i%2==0 ? box.outer.width: box.outer.depth,
+                                            fold: .hill,
+                                            work: work))
+        }
         
-        let outerWall2 = Rect.withFold(from: outerWall1,
-                                       towards: .right,
-                                       distance: box.outer.depth,
-                                       fold: .hill,
-                                       work: work)
-        let outerWall3 = Rect.withFold(from: outerWall2,
-                                       towards: .right,
-                                       distance: box.outer.width,
-                                       fold: .hill,
-                                       work: work)
-        let outerWall4 = Rect.withFold(from: outerWall3,
-                                       towards: .right,
-                                       distance: box.outer.depth,
-                                       fold: .hill,
-                                       work: work)
+        let _/*outerFlap*/ = Flap.withFold(from: outerWalls[3], towards: .right, distance: outerFillLength / 6, fold: .hill, work: work)
         
-        
-        let _/*outerFlap*/ = Flap.withFold(from: outerWall4, towards: .right, distance: outerFillLength / 6, fold: .hill, work: work)
-        
-        let rim1 = rimShape.withFold(from: outerWall1,
-                                     towards: .up,
-                                     distance: work.materialThickness,
-                                     fold: .hill,
-                                     work: work)
-        let rim2 = rimShape.withFold(from: outerWall2,
-                                     towards: .up,
-                                     distance: work.materialThickness,
-                                     fold: .hill,
-                                     work: work)
-        let rim3 = rimShape.withFold(from: outerWall3,
-                                     towards: .up,
-                                     distance: work.materialThickness,
-                                     fold: .hill,
-                                     work: work)
-        let rim4 = rimShape.withFold(from: outerWall4,
-                                     towards: .up,
-                                     distance: work.materialThickness,
-                                     fold: .hill,
-                                     work: work)
+        var rims: [Rect] = []
+        for i in 0...3 {
+            rims.append(rimShape.withFold(from: outerWalls[i],
+                                          towards: .up,
+                                          distance: work.materialThickness,
+                                          fold: .hill,
+                                          work: work))
+        }
         
         
-        let innerWall1 = Rect.withFold(from: rim1,
-                                       towards: .up,
-                                       distance: box.inner.height,
-                                       margin: internalOffset,
-                                       fold: .hill,
-                                       work: work)
-        let innerWall2 = Rect.withFold(from: rim2,
-                                       towards: .up,
-                                       distance: box.inner.height,
-                                       margin: internalOffset,
-                                       fold: .hill,
-                                       work: work)
-        let innerWall3 = Rect.withFold(from: rim3,
-                                       towards: .up,
-                                       distance: box.inner.height,
-                                       margin: internalOffset,
-                                       fold: .hill,
-                                       work: work)
-        let innerWall4 = Rect.withFold(from: rim4,
-                                       towards: .up,
-                                       distance: box.inner.height,
-                                       margin: internalOffset,
-                                       fold: .hill,
-                                       work: work)
+        var innerWalls: [Rect] = []
+        for i in 0...3 {
+            innerWalls.append(Rect.withFold(from: rims[i],
+                                            towards: .up,
+                                            distance: box.inner.height,
+                                            margin: internalOffset,
+                                            fold: .hill,
+                                            work: work))
+        }
         
+        var innerSlacks: [Rect] = []
         
-        
-        let _/*slack1*/ = Flap.withFold(from: innerWall1,
-                                        towards: .up,
-                                        distance: work.clothSlack,
-                                        fold: .valley,
-                                        work: work)
-        let _/*slack2*/ = Flap.withFold(from: innerWall2,
-                                        towards: .up,
-                                        distance: work.clothSlack,
-                                        fold: .valley,
-                                        work: work)
-        let _/*slack3*/ = Flap.withFold(from: innerWall3,
-                                        towards: .up,
-                                        distance: work.clothSlack,
-                                        fold: .valley,
-                                        work: work)
-        let _/*slack4*/ = Flap.withFold(from: innerWall4,
-                                        towards: .up,
-                                        distance: work.clothSlack,
-                                        fold: .valley,
-                                        work: work)
+        for i in 0...3 {
+            innerSlacks.append(Flap.withFold(from: innerWalls[i],
+                                             towards: .up,
+                                             distance: work.clothSlack,
+                                             fold: .valley,
+                                             work: work))
+        }
         
         
         if hasBottomSlack {
-            let bottomSlack1 = Flap.withFold(from: outerWall1,
-                                             towards: .down,
-                                             distance: parameters.bottomSlack,
-                                             fold: .hill,
-                                             work: work)
-            let bottomSlack2 = Flap.withFold(from: outerWall2,
-                                             towards: .down,
-                                             distance: parameters.bottomSlack,
-                                             fold: .hill,
-                                             work: work)
-            let bottomSlack3 = Flap.withFold(from: outerWall3,
-                                             towards: .down,
-                                             distance: parameters.bottomSlack,
-                                             fold: .hill,
-                                             work: work)
-            let bottomSlack4 = Flap.withFold(from: outerWall4,
-                                             towards: .down,
-                                             distance: parameters.bottomSlack,
-                                             fold: .hill,
-                                             work: work)
+            var bottomSlacks: [Rect] = []
+            
+            for i in 0...3 {
+                print(i)
+                bottomSlacks.append(Flap.withFold(from: outerWalls[i],
+                                                  towards: .down,
+                                                  distance: parameters.bottomSlack,
+                                                  fold: .hill,
+                                                  work: work))
+            }
         }
         
         
