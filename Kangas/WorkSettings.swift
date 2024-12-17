@@ -15,6 +15,7 @@ class WorkSettings {
     let clothSlack: Micron //paljonko kangasta annetaan yli joka paikassa.
     
     let kerf: Micron
+    let squareCorners: Bool
     
     init(options: Kangas.BoxOptions) {
         
@@ -23,6 +24,8 @@ class WorkSettings {
         clothSlack = Micron(millimeters: options.clothSlack)
         
         kerf = Micron(millimeters: options.kerf)
+        
+        squareCorners = options.squareCorners
         
     }
     

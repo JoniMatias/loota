@@ -10,23 +10,30 @@ import Foundation
 
 class Rect {
     
+    enum FoldType {
+        case hill
+        case valley
+        case none
+    }
+    
     let origin: Point
     let size: Size
     var neighbours: [Direction: Rect]
     
-    class func withHillEdge(from: Rect, towards: Direction, distance: Micron, work: WorkSettings) -> Rect {
+    class func withFold(from: Rect, towards: Direction, distance: Micron, margin: Micron = Micron(0), fold: FoldType, work: WorkSettings) -> Rect {
         
-        let edgeCurve = Rect(from: from, towards: towards, distance: work.clothThickness)
-        let rect = Rect.init(from: edgeCurve, towards: towards, distance: distance)
-        
-        return rect
-    }
-    
-    class func withValleyEdge(from: Rect, towards: Direction, distance: Micron, work: WorkSettings) -> Rect {
-        
-        let rect = Rect.init(from: from, towards: towards, distance: distance - work.clothThickness)
-        
-        return rect
+        switch fold {
+        case .hill:
+            let foldRect = Rect(from: from, towards: towards, distance: work.clothThickness, margin: margin)
+            let rect = Rect.init(from: foldRect, towards: towards, distance: distance)
+            return rect
+        case .valley:
+            let rect = Rect.init(from: from, towards: towards, distance: distance - work.clothThickness, margin: margin)
+            return rect
+        case .none:
+            let rect = Rect.init(from: from, towards: towards, distance: distance, margin: margin)
+            return rect
+        }
     }
     
     init(origin: Point, size: Size) {

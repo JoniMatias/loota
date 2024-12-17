@@ -20,12 +20,20 @@ class Flap: Rect {
     
     let thinEdge: Direction
     
-    override class func withHillEdge(from: Rect, towards: Direction, distance: Micron, work: WorkSettings) -> Rect {
+    override class func withFold(from: Rect, towards: Direction, distance: Micron, margin: Micron = Micron(0), fold: FoldType, work: WorkSettings) -> Rect {
         
-        let edgeCurve = Rect(from: from, towards: towards, distance: work.clothThickness)
-        let rect = Flap(from: edgeCurve, towards: towards, distance: distance)
-        
-        return rect
+        switch fold {
+        case .hill:
+            let foldRect = Rect(from: from, towards: towards, distance: work.clothThickness)
+            let rect = Flap(from: foldRect, towards: towards, distance: distance)
+            return rect
+        case .valley:
+            let rect = Flap(from: from, towards: towards, distance: distance - work.clothThickness)
+            return rect
+        case .none:
+            let rect = Flap(from: from, towards: towards, distance: distance)
+            return rect
+        }
     }
     
     required init(from: Rect, towards: Direction, distance: Micron, margin: Micron = Micron(0)) {

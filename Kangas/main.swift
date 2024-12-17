@@ -26,6 +26,7 @@ struct Kangas: ParsableCommand {
         @Option(help:"Sahan leikkaaman tai laserin polttaman uran leveys. Milleinä") var kerf: Double = 0.05
 
         @Flag(help:"Tämä lippu muuttaa annetut mittasuhteet laatikon sisämitoiksi.") var internalDimensions: Bool = false
+        @Flag(help:"Tämä lippu muuttaa kankaan sisäkulmat päällekkäisiksi neliskanttisiksi kulmiksi, eikä yritä esileikata niitä jiiriin.") var squareCorners: Bool = false
     }
     
     struct InoutOptions: ParsableArguments {

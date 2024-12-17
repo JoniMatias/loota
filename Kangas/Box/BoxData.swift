@@ -39,7 +39,6 @@ class BoxData {
     }
     
     func expanded(with: Micron, direction: [Direction3D]) -> Self {
-        
         return type(of: self).init(outer: outer.expanded(with: with, except: direction), work: work)
     }
     
