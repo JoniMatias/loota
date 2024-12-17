@@ -20,12 +20,7 @@ class FileDownloader {
 
         let destinationUrl = workingDirectoryUrl.appendingPathComponent(url.lastPathComponent)
 
-        if FileManager().fileExists(atPath: destinationUrl.path)
-        {
-            print("File already exists [\(destinationUrl.path)]")
-            completion(destinationUrl.path, nil)
-        }
-        else if let dataFromURL = NSData(contentsOf: url)
+        if let dataFromURL = NSData(contentsOf: url)
         {
             if dataFromURL.write(to: destinationUrl, atomically: true)
             {

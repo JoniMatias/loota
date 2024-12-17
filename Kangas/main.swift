@@ -32,6 +32,8 @@ struct Kangas: ParsableCommand {
     struct InoutOptions: ParsableArguments {
         @Option(help:"Tiedoston nimi, johon tulokset kirjoitetaan. Jos useita tiedostoja, nimenperään laitetaan lisämääreitä. Tiedostopäätettä ei pidä laittaa tähän. Oletuksena \"tulos\"") var outputFileName = "tulos";
         
+        @Flag(help:"Tämä lippu estää lataamasta tiedostoja boxespystä. Sen sijaan tulostaa linkin päätteeseen.") var noDownload = false
+        
         func write(content: String, suffix: String) {
             let workingDirectoryUrl = URL(filePath: FileManager.default.currentDirectoryPath)
             let filename = outputFileName + suffix
@@ -49,6 +51,12 @@ struct Kangas: ParsableCommand {
         
         func download(url: URL, suffix: String) {
             let filename = outputFileName + suffix
+            
+            guard noDownload == false else {
+                print("Voit ladata tiedoston \(filename) osoitteesta \(url.absoluteString)")
+                return
+            }
+            
             print("Ladataan tiedostoa \(filename)")
             
             FileDownloader.loadFileSync(url: url) { (path, error) in
@@ -56,10 +64,14 @@ struct Kangas: ParsableCommand {
                     do {
                         let currentFileUrl = URL(filePath: path)
                         let renamedUrl = currentFileUrl.deletingLastPathComponent().appending(component: filename)
+                        let fm = FileManager.default
+                        if fm.fileExists(atPath: renamedUrl.path) {
+                            try fm.removeItem(at: renamedUrl)
+                        }
                         try FileManager.default.moveItem(at: currentFileUrl, to: renamedUrl)
                         print("Tiedosto ladattiin sijaintiin \(renamedUrl.relativePath)")
-                    } catch {
-                        print("Ladatun tiedoston nimeäminen epäonnistui. Se on tallennettu nimellä \(path)")
+                    } catch let error {
+                        print("Ladatun tiedoston nimeäminen epäonnistui. Se on tallennettu nimellä \(path). Virhe: \(error)")
                     }
                 } else {
                     print("Tiedoston lataaminen epäonnistui.")

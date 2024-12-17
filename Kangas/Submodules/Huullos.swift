@@ -93,7 +93,7 @@ extension Kangas {
             inoutOptions.write(content: baseCloth, suffix: "-kangas-pohja.svg")
             inoutOptions.write(content: lidCloth, suffix: "-kangas-kansi.svg")
             inoutOptions.write(content: lipCloth, suffix: "-kangas-huullos.svg")
-            inoutOptions.write(content: floorCloth, suffix: "-kabgas-pohjan_pohja.svg")
+            inoutOptions.write(content: floorCloth, suffix: "-kangas-pohjan_pohja.svg")
             inoutOptions.write(content: ceilingCloth, suffix: "-kangas-kannen_pohja.svg")
             
         }
