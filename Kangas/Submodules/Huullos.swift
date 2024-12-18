@@ -12,6 +12,8 @@ extension Kangas {
     
     struct Huullos: ParsableCommand {
         
+        @Flag(help:"Tämä lippu pakottaa kankaan reunakiertokankaaksi.") var wallWrapCloth: Bool = false
+        
         @Option(name: [.long], help:"Kuinka korkea kansi on. Ylhäältä päin mitattuna. (t.s. *ei* kuinka korkealta kansi alkaa). Milleinä.") var lidHeight: Double = -1.0
         @Option(name: [.long], help:"Kuinka korkealle huullos nouse pohjasta. Voi olla enintään kannen korkeuden verran (lidHeight). Milleinä.") var lipHeight: Double = -1.0
         
@@ -59,7 +61,7 @@ extension Kangas {
             if lipHeight < 0 {
                 lipHeightMicrons = baseBox.inner.height + (lidBox.inner.height / 2)
             } else {
-                lipHeightMicrons = Micron(millimeters: lipHeight)
+                lipHeightMicrons = baseBox.inner.height + Micron(millimeters: lipHeight)
             }
             
             let lipBox = BoxOnlyWalls(outer:
@@ -70,8 +72,21 @@ extension Kangas {
             
             let lipClothSettings = Cloth.WallWrapOptions(outerWallFill: lipBox.outer.height - baseBox.inner.height + workData.clothSlack, bottomSlack: Micron(0))
             
-            let baseCloth = Cloth.createBasicWrap(box: baseBox, work: workData).first ?? ""
-            let lidCloth = Cloth.createBasicWrap(box: lidBox, work: workData).first ?? ""
+            
+            let baseCloth: String
+            let lidCloth: String
+            if wallWrapCloth {
+                baseCloth = Cloth.createWallWrap(parameters: .defaults(), box: baseBox, work: workData).first ?? ""
+                lidCloth = Cloth.createWallWrap(parameters: .defaults(), box: lidBox, work: workData).first ?? ""
+                let baseCeiling = Cloth.createOuterCeilingCover(box: baseBox, work: workData).first ?? ""
+                let lidCeiling = Cloth.createOuterCeilingCover(box: lidBox, work: workData).first ?? ""
+                
+                inoutOptions.write(content: baseCeiling, suffix: "-laatikko-pohjan-yläpinta")
+                inoutOptions.write(content: lidCeiling, suffix: "laatikko-kannen-yläpinta")
+            } else {
+                baseCloth = Cloth.createBasicWrap(box: baseBox, work: workData).first ?? ""
+                lidCloth = Cloth.createBasicWrap(box: lidBox, work: workData).first ?? ""
+            }
             let lipCloth = Cloth.createWallWrap(parameters: lipClothSettings, box: lipBox, work: workData).first ?? ""
             let floorCloth = Cloth.createInnerFloorCover(box: baseBox, work: workData).first ?? ""
             let ceilingCloth = Cloth.createInnerFloorCover(box: lidBox, work: workData).first ?? ""
@@ -93,8 +108,8 @@ extension Kangas {
             inoutOptions.write(content: baseCloth, suffix: "-kangas-pohja.svg")
             inoutOptions.write(content: lidCloth, suffix: "-kangas-kansi.svg")
             inoutOptions.write(content: lipCloth, suffix: "-kangas-huullos.svg")
-            inoutOptions.write(content: floorCloth, suffix: "-kangas-pohjan_pohja.svg")
-            inoutOptions.write(content: ceilingCloth, suffix: "-kangas-kannen_pohja.svg")
+            inoutOptions.write(content: floorCloth, suffix: "-kangas-pohjan-sisäpinta.svg")
+            inoutOptions.write(content: ceilingCloth, suffix: "-kangas-kannen-sisäpinta.svg")
             
         }
     }

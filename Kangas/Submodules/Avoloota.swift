@@ -28,7 +28,7 @@ extension Kangas {
                 cloth = Cloth.createWallWrap(parameters: Cloth.WallWrapOptions.init(outerWallFill: Micron(-1), bottomSlack: Micron(millimeters: 4)), box: totalBox, work: workData).first ?? ""
                 
                 let ceilingCloth = Cloth.createOuterCeilingCover(box: totalBox, work: workData).first ?? ""
-                inoutOptions.write(content: ceilingCloth, suffix: "-päällyskangas.svg")
+                inoutOptions.write(content: ceilingCloth, suffix: "-kangas-yläpinta.svg")
             } else {
                 cloth = Cloth.createBasicWrap(box: totalBox, work: workData).first ?? ""
             }
