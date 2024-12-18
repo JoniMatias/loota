@@ -30,7 +30,7 @@ struct Kangas: ParsableCommand {
     }
     
     struct InoutOptions: ParsableArguments {
-        @Option(help:"Tiedoston nimi, johon tulokset kirjoitetaan. Jos useita tiedostoja, nimenperään laitetaan lisämääreitä. Tiedostopäätettä ei pidä laittaa tähän. Oletuksena \"tulos\"") var outputFileName = "tulos";
+        @Option(name: [.short, .long], help:"Tiedoston nimi, johon tulokset kirjoitetaan. Jos useita tiedostoja, nimenperään laitetaan lisämääreitä. Tiedostopäätettä ei pidä laittaa tähän. Oletuksena \"tulos\"") var outputFileName = "tulos";
         
         @Flag(help:"Tämä lippu estää lataamasta tiedostoja boxespystä. Sen sijaan tulostaa linkin päätteeseen.") var noDownload = false
         
