@@ -59,9 +59,9 @@ extension Kangas {
             
             
             if lipHeight < 0 {
-                lipHeightMicrons = baseBox.inner.height + (lidBox.inner.height / 2)
+                lipHeightMicrons = lidBox.inner.height / 2
             } else {
-                lipHeightMicrons = baseBox.inner.height + Micron(millimeters: lipHeight)
+                lipHeightMicrons = Micron(millimeters: lipHeight)
             }
             
             let lipBox = BoxOnlyWalls(outer:
