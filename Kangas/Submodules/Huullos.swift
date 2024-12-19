@@ -71,8 +71,7 @@ extension Kangas {
                                       work: workData)
             
             let lipClothSettings = Cloth.WallWrapOptions(outerWallFill: lipBox.outer.height - baseBox.inner.height + workData.clothSlack, bottomSlack: Micron(0))
-            
-            
+
             let baseCloth: String
             let lidCloth: String
             if wallWrapCloth {
@@ -87,6 +86,7 @@ extension Kangas {
                 baseCloth = Cloth.createBasicWrap(box: baseBox, work: workData).first ?? ""
                 lidCloth = Cloth.createBasicWrap(box: lidBox, work: workData).first ?? ""
             }
+            
             let lipCloth = Cloth.createWallWrap(parameters: lipClothSettings, box: lipBox, work: workData).first ?? ""
             let floorCloth = Cloth.createInnerFloorCover(box: baseBox, work: workData).first ?? ""
             let ceilingCloth = Cloth.createInnerFloorCover(box: lidBox, work: workData).first ?? ""

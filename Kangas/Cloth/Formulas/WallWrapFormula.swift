@@ -31,9 +31,8 @@ extension Cloth {
     static func createWallWrap(parameters: WallWrapOptions, box: BoxData, work: WorkSettings) -> [String]  {
         
         ClothState.reset()
-        
-        let rimShape = work.squareCorners ? Rect.self : Flap.self
-        let internalOffset = work.squareCorners ? work.materialThickness : Micron(0)
+
+        let internalOffset = Micron(0)//work.squareCorners ? work.materialThickness : Micron(0)
         
         let outerFillLength = parameters.outerWallFill > Micron(0) ? min(box.outer.height, parameters.outerWallFill) : box.outer.height
         let hasBottomSlack = parameters.bottomSlack > Micron(0) && outerFillLength >= box.outer.height
@@ -51,17 +50,17 @@ extension Cloth {
         }
         
         let _/*outerFlap*/ = Flap.withFold(from: outerWalls[3], towards: .right, distance: outerFillLength / 6, fold: .hill, work: work)
-        
+
         var rims: [Rect] = []
         for i in 0...3 {
+            let rimShape = work.squareCorners ? Rect.self : Flap.self
             rims.append(rimShape.withFold(from: outerWalls[i],
                                           towards: .up,
                                           distance: work.materialThickness,
                                           fold: .hill,
                                           work: work))
         }
-        
-        
+
         var innerWalls: [Rect] = []
         for i in 0...3 {
             innerWalls.append(Rect.withFold(from: rims[i],
@@ -97,7 +96,7 @@ extension Cloth {
         }
         
         
-        return [svgFrom(lines: findCuttableLines(from: ClothState.allRects))]
+        return [svgFrom(continuousLines: ContinuousLine.connect(lines: findCuttableLines(from: ClothState.allRects)))]
     }
 
     

@@ -136,27 +136,37 @@ func svgFrom(lines: [Line]) -> String {
     
 }
 
-func svgFrom(continuousLine: ContinuousLine) -> String {
-    
+func svgFrom(continuousLines: [ContinuousLine]) -> String {
+
+    var content = ""
     let bounds = boundingArea()
     let shift = Point(x: -bounds.origin.x, y: -bounds.origin.y)
     let header = "<svg width=\"\(bounds.size.width.inMillimeter())mm\" height=\"\(bounds.size.height.inMillimeter())mm\" viewBox=\"\(bounds.origin.x + shift.x) \(bounds.origin.y + shift.y) \(bounds.size.width) \(bounds.size.height)\" version=\"1.1\">\n"
     let footer = "</svg>"
+    var index = 1
     
-    var firstPoint = true
-    var data = "<g id=\"p-1\" style=\"fill:none;stroke-linecap:round;stroke-linejoin:round;\">\n<path d=\""
-    for point in continuousLine.points {
-        if firstPoint {
-            firstPoint = false
-            data += "M "
-        } else {
-            data += "L "
+    content += header
+    
+    for continuousLine in continuousLines {
+        var firstPoint = true
+        var data = "<g id=\"p-\(index)\" style=\"fill:none;stroke-linecap:round;stroke-linejoin:round;\">\n<path d=\""
+        for point in continuousLine.points {
+            if firstPoint {
+                firstPoint = false
+                data += "M "
+            } else {
+                data += "L "
+            }
+            data += "\(point.x + shift.x) \(point.y + shift.y) "
         }
-        data += "\(point.x + shift.x) \(point.y + shift.y) "
+        data += "Z\" stroke=\"rgb(0,0,0)\" stroke-width=\"20\" />\n</g>"
+        index += 1
+        content += data
     }
-    data += "Z\" stroke=\"rgb(0,0,0)\" stroke-width=\"20\" />\n</g>"
     
-    return header + data + footer
+    content += footer
+    
+    return content
     
 }
 

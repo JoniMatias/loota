@@ -35,7 +35,12 @@ struct Line {
 struct ContinuousLine {
     let points: [Point]
     
-    init(lines: [Line]) {
+    static func connect(lines: [Line]) -> [ContinuousLine] {
+        
+        guard lines.count > 0 else {
+            return []
+        }
+        
         var unusedLines = lines
         var foundPoints: [Point] = []
         
@@ -82,17 +87,34 @@ struct ContinuousLine {
                     closestDistance = endDistance
                 }
                  */
+                 
             }
             if let foundLineIndex = foundLineIndex {
                 unusedLines.remove(at: foundLineIndex)
             }
             if let foundPoint = foundPoint {
                 previousPoint = foundPoint
+            } else {
+                break
             }
         } while (unusedLines.count > 0)
         
+        var foundPaths: [ContinuousLine] = []
+        
+        if unusedLines.count > 0 {
+            foundPaths.append(contentsOf: connect(lines: unusedLines))
+        }
+        
+        
         foundPoints.append(startPoint)
-        points = foundPoints
+        
+        foundPaths.append(ContinuousLine(points: foundPoints))
+        return foundPaths
+    }
+    
+    init(points: [Point]) {
+        self.points = points
+
     }
 }
 

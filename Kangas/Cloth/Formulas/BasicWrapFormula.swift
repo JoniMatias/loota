@@ -42,14 +42,13 @@ extension Cloth {
         let innerWallRight = Rect.withFold(from: rimRight, towards: .right, distance: box.inner.height, margin: innerWallOffset,  fold: .hill, work: work)
         let innerWallDown = Rect.withFold(from: rimDown, towards: .down, distance: box.inner.height, margin: innerWallOffset,  fold: .hill, work: work)
         let innerWallLeft = Rect.withFold(from: rimLeft, towards: .left, distance: box.inner.height, margin: innerWallOffset,  fold: .hill, work: work)
-        
+
         let _/*slackUp*/ = Flap.withFold(from: innerWallUp, towards: .up, distance: work.clothSlack, fold: .valley, work: work)
         let _/*slackRight*/ = Flap.withFold(from: innerWallRight, towards: .right, distance: work.clothSlack, fold: .valley, work: work)
         let _/*slackDown*/ = Flap.withFold(from: innerWallDown, towards: .down, distance: work.clothSlack, fold: .valley, work: work)
         let _/*slackLeft*/ = Flap.withFold(from: innerWallLeft, towards: .left, distance: work.clothSlack, fold: .valley, work: work)
-     
-        
-        return [svgFrom(continuousLine: ContinuousLine(lines: findCuttableLines(from: ClothState.allRects)))]
+
+        return [svgFrom(continuousLines: ContinuousLine.connect(lines: findCuttableLines(from: ClothState.allRects)))]
     }
 
     
