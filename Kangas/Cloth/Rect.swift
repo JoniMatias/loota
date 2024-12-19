@@ -128,9 +128,9 @@ class Rect {
         if let rect = neighbourRect {
             switch neighbour {
             case .up, .down:
-                return self.size.width - rect.size.width
+                return self.lengthOf(edge: neighbour) - rect.size.width
             case .right, .left:
-                return self.size.height - rect.size.height
+                return self.lengthOf(edge: neighbour) - rect.size.height
             }
         }
         return Micron(0)
@@ -161,6 +161,10 @@ class Rect {
             case .left:
                 line1 = Line(self.corner(.sw), neighbour.corner(.se))
                 line2 = Line(self.corner(.nw), neighbour.corner(.ne))
+            }
+            
+            if line1.start == line1.end || line2.start == line2.end {
+                return []
             }
             
             return [line1, line2]
