@@ -100,19 +100,17 @@ func findCuttableLines(from: [Rect]) -> [Line] {
 }
 
 
-func boundingArea() -> Rect {
+func boundingArea(from: [ContinuousLine]) -> Rect {
     
     var minX = Micron(Int.max)
     var minY = Micron(Int.max)
     var maxX = Micron(Int.min)
     var maxY = Micron(Int.min)
     
-    for rect in ClothState.allRects {
-        for corner in rect.corners().values {
-            minX = min(minX, corner.x)
-            minY = min(minY, corner.y)
-            maxX = max(maxX, corner.x)
-            maxY = max(maxY, corner.y)
+    for line in from {
+        for point in line.points {
+            minX = min(minX, point.x)
+            minY = min(minY, point.y)
         }
     }
     
@@ -120,26 +118,10 @@ func boundingArea() -> Rect {
     
 }
 
-func svgFrom(lines: [Line]) -> String {
-    
-    let bounds = boundingArea()
-    let shift = Point(x: -bounds.origin.x, y: -bounds.origin.y)
-    let header = "<svg width=\"\(bounds.size.width.inMillimeter())mm\" height=\"\(bounds.size.height.inMillimeter())mm\" viewBox=\"\(bounds.origin.x + shift.x) \(bounds.origin.y + shift.y) \(bounds.size.width) \(bounds.size.height)\" version=\"1.1\">\n"
-    let footer = "</svg>"
-    
-    var data = ""
-    for line in lines {
-        data += "<line x1=\"\(line.start.x + shift.x)\" y1=\"\(line.start.y + shift.y)\" x2=\"\(line.end.x + shift.x)\" y2=\"\(line.end.y + shift.y)\" style=\"stroke:black;stroke-width:20\" />\n"
-    }
-    
-    return header + data + footer
-    
-}
-
 func svgFrom(continuousLines: [ContinuousLine]) -> String {
 
     var content = ""
-    let bounds = boundingArea()
+    let bounds = boundingArea(from: continuousLines)
     let shift = Point(x: -bounds.origin.x, y: -bounds.origin.y)
     let header = "<svg width=\"\(bounds.size.width.inMillimeter())mm\" height=\"\(bounds.size.height.inMillimeter())mm\" viewBox=\"\(bounds.origin.x + shift.x) \(bounds.origin.y + shift.y) \(bounds.size.width) \(bounds.size.height)\" version=\"1.1\">\n"
     let footer = "</svg>"

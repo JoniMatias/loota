@@ -19,7 +19,7 @@ extension Cloth {
         
         let _/*floor*/ = Rect(origin: p(0,0), size: Size(width: box.inner.width, height: box.inner.depth))
         
-        return [svgFrom(lines: findCuttableLines(from: ClothState.allRects))]
+        return [svgFrom(continuousLines: ContinuousLine.connect(lines: findCuttableLines(from: ClothState.allRects)))]
     }
     
     
@@ -28,7 +28,7 @@ extension Cloth {
         
         let _/*ceiling*/ = Rect(origin: p(0,0), size: Size(width: box.outer.width, height: box.outer.depth))
         
-        return [svgFrom(lines: findCuttableLines(from: ClothState.allRects))]
+        return [svgFrom(continuousLines: ContinuousLine.connect(lines: findCuttableLines(from: ClothState.allRects)))]
     }
 
     
