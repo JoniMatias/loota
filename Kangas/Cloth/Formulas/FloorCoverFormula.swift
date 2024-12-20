@@ -14,7 +14,6 @@ extension Cloth {
      Palauttaa stringing, jossa on svg-tiedoston sisältö.
      */
     static func createInnerFloorCover(box: BoxData, work: WorkSettings) -> [String]  {
-        
         ClothState.reset()
         
         let _/*floor*/ = Rect(origin: p(0,0), size: Size(width: box.inner.width, height: box.inner.depth))

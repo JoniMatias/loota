@@ -111,6 +111,8 @@ func boundingArea(from: [ContinuousLine]) -> Rect {
         for point in line.points {
             minX = min(minX, point.x)
             minY = min(minY, point.y)
+            maxX = max(maxX, point.x)
+            maxY = max(maxY, point.y)
         }
     }
     
