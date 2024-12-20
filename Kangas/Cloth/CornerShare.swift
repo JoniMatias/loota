@@ -10,12 +10,9 @@ import Foundation
 
 class ClothState {
     static var allRects: [Rect] = []
-
-    static var sharedCorners: [Point: [Rect]] = [:]
     
     static func reset() {
         allRects = []
-        sharedCorners = [:]
     }
 }
 

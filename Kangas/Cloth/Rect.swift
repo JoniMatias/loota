@@ -75,19 +75,29 @@ class Rect {
         self.size = size
         neighbours = [opposite(of: towards): from]
         
-        for corner in corners() {
-            if var rects = ClothState.sharedCorners[corner.value] {
-                rects.append(self)
-                ClothState.sharedCorners[corner.value] = rects
-            } else {
-                ClothState.sharedCorners[corner.value] = [self]
-            }
-        }
-        
         from.neighbours[towards] = self
         ClothState.allRects.append(self)
     }
     
+    public func join(to: Rect, alongEdge: Direction) {
+        guard neighbours[alongEdge] != nil else {
+            print("Virhe: Yrittää liittää suorakulmioon \(self) suuntaan \(alongEdge), mutta se on varattu.")
+            return
+        }
+        guard to.neighbours[opposite(of: alongEdge)] != nil else {
+            print("Virhe: Yrittää liittää suorakulmiota \(to) toiseen suunnasta \(alongEdge), mutta vastainen sivu on varattu.")
+            return
+        }
+        
+        neighbours[alongEdge] = to
+        to.neighbours[opposite(of: alongEdge)] = self
+    }
+    
+    
+    
+    
+    
+    //MARK: Geometria-funktioita
     
     public func lineAlong(edge: Direction) -> Line {
         let points = pointsAlong(edge: edge)
