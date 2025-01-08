@@ -13,7 +13,7 @@ struct Kangas: ParsableCommand {
     
     static var configuration = CommandConfiguration(
             abstract: "Luo laatikoiden leikattavia muotteja.",
-            subcommands: [Huullos.self, Avoloota.self],
+            subcommands: [Huullos.self, Avoloota.self, Puristus.self],
             defaultSubcommand: Kangas.self)
 
     struct BoxOptions: ParsableArguments {
@@ -34,18 +34,24 @@ struct Kangas: ParsableCommand {
         
         @Flag(help:"Tämä lippu estää lataamasta tiedostoja boxespystä. Sen sijaan tulostaa linkin päätteeseen.") var noDownload = false
         
-        func write(content: String, suffix: String) {
+        func write(content: [String], suffix: String) {
             let workingDirectoryUrl = URL(filePath: FileManager.default.currentDirectoryPath)
-            let filename = outputFileName + suffix
-            let url = workingDirectoryUrl.appending(path: filename)
             
             do {
-                print("Kirjoitetaan tiedostoa: \(url.path)")
-                try content.write(toFile:url.path,
-                                  atomically: false,
-                                  encoding: .utf8)
+                for i in 0..<content.count {
+                    let text = content[i]
+                    let appendedIndex = content.count > 1 ? "-\(i)" : ""
+                    
+                    let filename = outputFileName + suffix + appendedIndex
+                    let url = workingDirectoryUrl.appending(path: filename)
+                    
+                    print("Kirjoitetaan tiedostoa: \(url.path)")
+                    try text.write(toFile:url.path,
+                                   atomically: false,
+                                   encoding: .utf8)
+                }
             } catch {
-                print("Kirjoittaessa tiedostoa \(url.path) tapahtui virhe: \(error).")
+                print("Kirjoittaessa tiedostoa \(suffix) tapahtui virhe: \(error).")
             }
         }
         

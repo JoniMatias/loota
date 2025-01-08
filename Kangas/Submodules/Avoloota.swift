@@ -23,21 +23,21 @@ extension Kangas {
             let totalBox = BoxOpenTopped(options: options, work: workData)
             
 
-            let cloth: String
+            let cloth: [String]
             if wallWrapCloth {
-                cloth = Cloth.createWallWrap(parameters: Cloth.WallWrapOptions.init(outerWallFill: Micron(-1), bottomSlack: Micron(millimeters: 4)), box: totalBox, work: workData).first ?? ""
+                cloth = Cloth.createWallWrap(parameters: Cloth.WallWrapOptions.init(outerWallFill: Micron(-1), bottomSlack: Micron(millimeters: 4)), box: totalBox, work: workData)
                 
-                let ceilingCloth = Cloth.createOuterCeilingCover(box: totalBox, work: workData).first ?? ""
+                let ceilingCloth = Cloth.createOuterCeilingCover(box: totalBox, work: workData)
                 inoutOptions.write(content: ceilingCloth, suffix: "-kangas-yläpinta.svg")
             } else {
-                cloth = Cloth.createBasicWrap(box: totalBox, work: workData).first ?? ""
+                cloth = Cloth.createBasicWrap(box: totalBox, work: workData)
             }
-            let floorCloth = Cloth.createInnerFloorCover(box: totalBox, work: workData).first ?? ""
+            let floorCloth = Cloth.createInnerFloorCover(box: totalBox, work: workData)
             
-            let boxesPyFileContent = """
+            let boxesPyFileContent = ["""
             Loota:
             \(totalBox.toBoxesPyAddress(work: workData))
-            """
+            """]
             
             inoutOptions.download(url: totalBox.toUrl(work: workData), suffix: "-laatikko.svg")
             
