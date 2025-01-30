@@ -11,17 +11,20 @@ import Foundation
 extension Cloth {
  
     struct WallWrapOptions {
-        let outerWallFill: Micron;//Paljonko ulkoseinää täytetään ylhäältä päin. Jos isompi kuin korkeus, niin käytetään korkeutta.
+        let innerWallFill: Micron//Paljonko sisäseinää täytetään ylhäältä päin. Jos negatiivinen tai isompi kuin sisäkorkeus, niin käytetään sisäkorkeutta.
+        
+        let outerWallFill: Micron;//Paljonko ulkoseinää täytetään ylhäältä päin. Jos isompi kuin ulkokorkeus, niin käytetään ulkokorkeutta.
         
         let bottomSlack: Micron; //Jos koko ulkoseinä täytetään, niin paljonko alapintaan jätetään ylimääräistä. Ei tee mitään, jo outerWallFill on vähemmän kuin korkeus.
         
-        init(outerWallFill: Micron, bottomSlack: Micron) {
+        init(outerWallFill: Micron = Micron(-1), innerWallFill: Micron = Micron(-1), bottomSlack: Micron = Micron(millimeters: 8)) {
             self.outerWallFill = outerWallFill
             self.bottomSlack = bottomSlack
+            self.innerWallFill = innerWallFill
         }
         
         static func defaults() -> WallWrapOptions {
-            return WallWrapOptions(outerWallFill: Micron(-1), bottomSlack: Micron(-1))
+            return WallWrapOptions()
         }
     }
     
@@ -34,7 +37,9 @@ extension Cloth {
 
         let internalOffset = Micron(0)//work.squareCorners ? work.materialThickness : Micron(0)
         
+        let innerFillLength = parameters.innerWallFill > Micron(0) ? min(box.inner.height, parameters.innerWallFill) : box.inner.height
         let outerFillLength = parameters.outerWallFill > Micron(0) ? min(box.outer.height, parameters.outerWallFill) : box.outer.height
+        
         let hasBottomSlack = parameters.bottomSlack > Micron(0) && outerFillLength >= box.outer.height
         
         
@@ -65,7 +70,7 @@ extension Cloth {
         for i in 0...3 {
             innerWalls.append(Rect.withFold(from: rims[i],
                                             towards: .up,
-                                            distance: box.inner.height,
+                                            distance: innerFillLength,
                                             margin: internalOffset,
                                             fold: .hill,
                                             work: work))

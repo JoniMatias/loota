@@ -14,6 +14,8 @@ extension Kangas {
         
         @Flag(help:"Tämä lippu pakottaa kankaan reunakiertokankaaksi.") var wallWrapCloth: Bool = false
         
+        @Option(name: [.long], help:"Kuinka pitkälle kangas menee laatikon sisäseinää pitkin. Milleinä.") var innerWallFill: Double = Double.greatestFiniteMagnitude
+        
         @OptionGroup private var options: Kangas.BoxOptions
         @OptionGroup private var inoutOptions: Kangas.InoutOptions
         
@@ -21,16 +23,15 @@ extension Kangas {
             
             let workData = WorkSettings(options: options)
             let totalBox = BoxOpenTopped(options: options, work: workData)
-            
 
             let cloth: [String]
             if wallWrapCloth {
-                cloth = Cloth.createWallWrap(parameters: Cloth.WallWrapOptions.init(outerWallFill: Micron(-1), bottomSlack: Micron(millimeters: 4)), box: totalBox, work: workData)
+                cloth = Cloth.createWallWrap(parameters: Cloth.WallWrapOptions.init(innerWallFill: Micron(millimeters: innerWallFill)), box: totalBox, work: workData)
                 
                 let ceilingCloth = Cloth.createOuterCeilingCover(box: totalBox, work: workData)
                 inoutOptions.write(content: ceilingCloth, suffix: "-kangas-yläpinta.svg")
             } else {
-                cloth = Cloth.createBasicWrap(box: totalBox, work: workData)
+                cloth = Cloth.createBasicWrap(parameters: Cloth.BasicWrapOptions(innerWallFill: Micron(millimeters: innerWallFill)), box: totalBox, work: workData)
             }
             let floorCloth = Cloth.createInnerFloorCover(box: totalBox, work: workData)
             

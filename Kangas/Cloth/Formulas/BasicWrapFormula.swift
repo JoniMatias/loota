@@ -9,10 +9,22 @@ import Foundation
 
 extension Cloth {
 
+    public struct BasicWrapOptions {
+        let innerWallFill: Micron //Paljonko sisäseinää täytetään ylhäältä päin. Jos isompi kuin sisäkorkeus tai negatiivinen, niin käytetään korkeutta.
+        
+        init(innerWallFill: Micron) {
+            self.innerWallFill = innerWallFill
+        }
+        
+        static func defaults() -> BasicWrapOptions {
+            return BasicWrapOptions(innerWallFill: Micron(-1))
+        }
+    }
+    
     /*
      Palauttaa stringin, jossa on svg-tiedoston sisältö.
      */
-    static func createBasicWrap(box: BoxData, work: WorkSettings) -> [String] {
+    static func createBasicWrap(parameters: BasicWrapOptions, box: BoxData, work: WorkSettings) -> [String] {
         
         ClothState.reset()
         
@@ -38,10 +50,17 @@ extension Cloth {
         let _/*flapDownLeft*/ = Flap.withFold(from: outerWallDown, towards: .left, distance: size.height / 6, fold: .hill, work: work)
         let _/*flapDownRight*/ = Flap.withFold(from: outerWallDown, towards: .right, distance: size.height / 6, fold: .hill, work: work)
         
-        let innerWallUp = Rect.withFold(from: rimUp, towards: .up, distance: box.inner.height, margin: innerWallOffset, fold: .hill, work: work)
-        let innerWallRight = Rect.withFold(from: rimRight, towards: .right, distance: box.inner.height, margin: innerWallOffset,  fold: .hill, work: work)
-        let innerWallDown = Rect.withFold(from: rimDown, towards: .down, distance: box.inner.height, margin: innerWallOffset,  fold: .hill, work: work)
-        let innerWallLeft = Rect.withFold(from: rimLeft, towards: .left, distance: box.inner.height, margin: innerWallOffset,  fold: .hill, work: work)
+        let innerWallDistance: Micron
+        if parameters.innerWallFill < Micron(0) || parameters.innerWallFill > box.inner.height {
+            innerWallDistance = box.inner.height
+        } else {
+            innerWallDistance = parameters.innerWallFill
+        }
+        
+        let innerWallUp = Rect.withFold(from: rimUp, towards: .up, distance: innerWallDistance, margin: innerWallOffset, fold: .hill, work: work)
+        let innerWallRight = Rect.withFold(from: rimRight, towards: .right, distance: innerWallDistance, margin: innerWallOffset,  fold: .hill, work: work)
+        let innerWallDown = Rect.withFold(from: rimDown, towards: .down, distance: innerWallDistance, margin: innerWallOffset,  fold: .hill, work: work)
+        let innerWallLeft = Rect.withFold(from: rimLeft, towards: .left, distance: innerWallDistance, margin: innerWallOffset,  fold: .hill, work: work)
 
         let _/*slackUp*/ = Flap.withFold(from: innerWallUp, towards: .up, distance: work.clothSlack, fold: .valley, work: work)
         let _/*slackRight*/ = Flap.withFold(from: innerWallRight, towards: .right, distance: work.clothSlack, fold: .valley, work: work)

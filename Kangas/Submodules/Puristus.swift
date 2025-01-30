@@ -47,8 +47,8 @@ extension Kangas {
                 inoutOptions.write(content: outerTopCloth, suffix: "-kangas-kansi-ulkopinta.svg")
                 inoutOptions.write(content: outerBottomCloth, suffix: "-kangas-pohja-ulkopinta.svg")
             } else {
-                innerCloth = Cloth.createBasicWrap(box: innerBox, work: workData)
-                lidCloth = Cloth.createBasicWrap(box: lidBox, work: workData)
+                innerCloth = Cloth.createBasicWrap(parameters: .defaults(), box: innerBox, work: workData)
+                lidCloth = Cloth.createBasicWrap(parameters: .defaults(), box: lidBox, work: workData)
             }
             
             let innerLidCloth = Cloth.createInnerFloorCover(box: lidBox, work: workData)

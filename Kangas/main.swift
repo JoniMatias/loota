@@ -32,7 +32,7 @@ struct Kangas: ParsableCommand {
     struct InoutOptions: ParsableArguments {
         @Option(name: [.short, .long], help:"Tiedoston nimi, johon tulokset kirjoitetaan. Jos useita tiedostoja, nimenperään laitetaan lisämääreitä. Tiedostopäätettä ei pidä laittaa tähän. Oletuksena \"tulos\"") var outputFileName = "tulos";
         
-        @Flag(help:"Tämä lippu estää lataamasta tiedostoja boxespystä. Sen sijaan tulostaa linkin päätteeseen.") var noDownload = false
+        @Flag(help:"Tämä lippu estää lataamasta tiedostoja boxes.pystä. Sen sijaan tulostaa linkin päätteeseen.") var noDownload = false
         
         func write(content: [String], suffix: String) {
             let workingDirectoryUrl = URL(filePath: FileManager.default.currentDirectoryPath)

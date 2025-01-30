@@ -75,7 +75,7 @@ extension Kangas {
             let baseCloth: [String]
             let lidCloth: [String]
             if wallWrapCloth {
-                baseCloth = Cloth.createWallWrap(parameters: .defaults(), box: baseBox, work: workData)
+                baseCloth = Cloth.createWallWrap(parameters: Cloth.WallWrapOptions(innerWallFill: Micron(millimeters: 10)), box: baseBox, work: workData)
                 lidCloth = Cloth.createWallWrap(parameters: .defaults(), box: lidBox, work: workData)
                 let baseCeiling = Cloth.createOuterCeilingCover(box: baseBox, work: workData)
                 let lidCeiling = Cloth.createOuterCeilingCover(box: lidBox, work: workData)
@@ -83,8 +83,10 @@ extension Kangas {
                 inoutOptions.write(content: baseCeiling, suffix: "-laatikko-pohjan-yläpinta")
                 inoutOptions.write(content: lidCeiling, suffix: "laatikko-kannen-yläpinta")
             } else {
-                baseCloth = Cloth.createBasicWrap(box: baseBox, work: workData)
-                lidCloth = Cloth.createBasicWrap(box: lidBox, work: workData)
+                let baseBoxClothParameters = Cloth.BasicWrapOptions.init(innerWallFill: Micron(millimeters: 10))
+                
+                baseCloth = Cloth.createBasicWrap(parameters: baseBoxClothParameters, box: baseBox, work: workData)
+                lidCloth = Cloth.createBasicWrap(parameters: .defaults(), box: lidBox, work: workData)
             }
             
             let lipCloth = Cloth.createWallWrap(parameters: lipClothSettings, box: lipBox, work: workData)
