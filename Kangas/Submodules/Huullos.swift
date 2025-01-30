@@ -14,8 +14,9 @@ extension Kangas {
         
         @Flag(help:"Tämä lippu pakottaa kankaan reunakiertokankaaksi.") var wallWrapCloth: Bool = false
         
-        @Option(name: [.long], help:"Kuinka korkea kansi on. Ylhäältä päin mitattuna. (t.s. *ei* kuinka korkealta kansi alkaa). Milleinä.") var lidHeight: Double = -1.0
-        @Option(name: [.long], help:"Kuinka korkealle huullos nouse pohjasta. Voi olla enintään kannen korkeuden verran (lidHeight). Milleinä.") var lipHeight: Double = -1.0
+        @Option(name: [.long], help:"Kuinka korkea kansi on. Ylhäältä päin mitattuna. (t.s. *ei* kuinka korkealta kansi alkaa). Jos tätä ei aseteta, kansi on 30% koko korkeudesta. Milleinä.") var lidHeight: Double?
+        @Option(name: [.long], help:"Kuinka korkealle huullos nouse pohjasta. Voi olla enintään kannen korkeuden verran (lidHeight). Oletuksena puolet kannen korkeudesta. Milleinä.") var lipHeight: Double?
+        @Option(name: [.long], help:"Huulloksen materiaalin paksuus. Oletuksena sama kuin --material-thickness. Milleinä.") var lipThickness: Double?
         
         @OptionGroup private var options: Kangas.BoxOptions
         @OptionGroup private var inoutOptions: Kangas.InoutOptions
@@ -23,11 +24,14 @@ extension Kangas {
         func run() {
             
             let workData = WorkSettings(options: options)
+            var internalOptions = options
+            internalOptions.materialThickness = lipThickness != nil ? lipThickness! : options.materialThickness
+            let internalWorkData = WorkSettings(options: internalOptions)
             let totalBox: BoxData
             
             if options.internalDimensions {
                 //Lasketaan ulkopuolen mittasuhteet kuntoon ennen aloittamista. Tätä ei voi tehdä BoxDatan sisällä, koska huulloslaatikko käyttää useampaa sisäkkäistä laatikkoa.
-                let internalBox = BoxData(options: options, work: workData)
+                let internalBox = BoxData(options: internalOptions, work: internalWorkData)
                 let outerDimension = Dimensions(width: internalBox.outer.width + 2*workData.materialThickness + 2*workData.clothThickness,
                                                 height: internalBox.outer.height + 2*workData.materialThickness,
                                                 depth: internalBox.outer.depth + 2*workData.materialThickness + 2*workData.clothThickness)
@@ -39,10 +43,10 @@ extension Kangas {
             let lidHeightMicrons: Micron
             let lipHeightMicrons: Micron
             
-            if lidHeight < 0 {
+            if lidHeight == nil {
                 lidHeightMicrons = totalBox.outer.height * 0.3
             } else {
-                lidHeightMicrons = Micron(millimeters: lidHeight)
+                lidHeightMicrons = Micron(millimeters: lidHeight!)
             }
             
             
@@ -58,16 +62,19 @@ extension Kangas {
                                         work: workData)
             
             
-            if lipHeight < 0 {
+            if lipHeight == nil {
                 lipHeightMicrons = lidBox.inner.height / 2
             } else {
-                lipHeightMicrons = Micron(millimeters: lipHeight)
+                lipHeightMicrons = Micron(millimeters: lipHeight!)
+                if lipHeightMicrons > lidBox.inner.height {
+                    print("Huom! Parametri '--lipHeight' on korkeampi kuin kansi.")
+                }
             }
             
             let lipBox = BoxOnlyWalls(outer:
-                                        Dimensions(width: totalBox.inner.width - 2*workData.materialThickness - 2*workData.clothThickness,
+                                        Dimensions(width: totalBox.inner.width - 2*workData.clothThickness,
                                                    height: baseBox.inner.height + lipHeightMicrons,
-                                                   depth: totalBox.inner.depth - 2*workData.materialThickness - 2*workData.clothThickness),
+                                                   depth: totalBox.inner.depth - 2*workData.clothThickness),
                                       work: workData)
             
             let lipClothSettings = Cloth.WallWrapOptions(outerWallFill: lipBox.outer.height - baseBox.inner.height + workData.clothSlack, bottomSlack: Micron(0))
